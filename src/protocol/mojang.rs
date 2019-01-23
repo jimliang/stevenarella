@@ -36,6 +36,9 @@ impl Profile {
             access_token: token.to_string()
         }
     }
+    pub fn is_offline(&self) -> bool {
+        self.username == self.id
+    }
     pub fn login(username: &str, password: &str, token: &str) -> Result<Profile, super::Error> {
         let req_msg = json!({
             "username": username,
@@ -69,6 +72,9 @@ impl Profile {
     }
 
     pub fn refresh(self, token: &str) -> Result<Profile, super::Error> {
+        if self.is_offline() {
+            return Ok(self)
+        }
         let req_msg = json!({
             "accessToken": self.access_token.clone(),
             "clientToken": token
@@ -107,6 +113,9 @@ impl Profile {
     }
 
     pub fn join_server(&self, server_id: &str, shared_key: &[u8], public_key: &[u8]) -> Result<(), super::Error> {
+        if self.is_offline() {
+            return Ok(())
+        }
         let mut hasher = sha1::Sha1::new();
         hasher.input(server_id.as_bytes());
         hasher.input(shared_key);
