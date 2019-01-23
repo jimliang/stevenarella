@@ -29,6 +29,13 @@ const REFRESH_URL: &str = "https://authserver.mojang.com/refresh";
 const VALIDATE_URL: &str = "https://authserver.mojang.com/validate";
 
 impl Profile {
+    pub fn unauth(username: &str, token: &str) -> Profile {
+        Profile {
+            username: username.to_string(),
+            id: username.to_string(),
+            access_token: token.to_string()
+        }
+    }
     pub fn login(username: &str, password: &str, token: &str) -> Result<Profile, super::Error> {
         let req_msg = json!({
             "username": username,
